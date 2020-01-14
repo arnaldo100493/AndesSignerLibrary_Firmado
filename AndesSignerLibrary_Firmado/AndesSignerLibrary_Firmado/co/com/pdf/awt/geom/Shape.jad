@@ -1,0 +1,35 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:07:00 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   Shape.java
+
+package co.com.pdf.awt.geom;
+
+
+// Referenced classes of package co.com.pdf.awt.geom:
+//            Point2D, Rectangle2D, Rectangle, AffineTransform, 
+//            PathIterator
+
+public interface Shape
+{
+
+    public abstract boolean contains(double d, double d1);
+
+    public abstract boolean contains(double d, double d1, double d2, double d3);
+
+    public abstract boolean contains(Point2D point2d);
+
+    public abstract boolean contains(Rectangle2D rectangle2d);
+
+    public abstract Rectangle getBounds();
+
+    public abstract Rectangle2D getBounds2D();
+
+    public abstract PathIterator getPathIterator(AffineTransform affinetransform);
+
+    public abstract PathIterator getPathIterator(AffineTransform affinetransform, double d);
+
+    public abstract boolean intersects(double d, double d1, double d2, double d3);
+
+    public abstract boolean intersects(Rectangle2D rectangle2d);
+}

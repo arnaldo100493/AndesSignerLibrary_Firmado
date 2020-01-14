@@ -1,0 +1,95 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:06:53 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   CMSApplet.java
+
+package co.com.andesscd.applets;
+
+import java.io.ByteArrayInputStream;
+import java.io.PrintStream;
+import java.security.PrivilegedAction;
+
+// Referenced classes of package co.com.andesscd.applets:
+//            CMSApplet
+
+class CMSApplet$7PrivilegedActionListarStore
+    implements PrivilegedAction
+{
+
+    public String run()
+    {
+        String firmaBase64 = "";
+        ByteArrayInputStream streamAFirmar;
+        Throwable throwable;
+        streamAFirmar = new ByteArrayInputStream(textoAFirmar.getBytes("UTF-8"));
+        throwable = null;
+        try
+        {
+            System.out.print("Firmando texto en formato PKCS7...");
+            firmaBase64 = firmarStream(streamAFirmar, pathAlStore, passwordDelStore, alias, false, null);
+            System.out.println("...OK");
+        }
+        catch(Throwable throwable1)
+        {
+            throwable = throwable1;
+            throw throwable1;
+        }
+        if(streamAFirmar != null)
+            if(throwable != null)
+                try
+                {
+                    streamAFirmar.close();
+                }
+                catch(Throwable x2)
+                {
+                    throwable.addSuppressed(x2);
+                }
+            else
+                streamAFirmar.close();
+        break MISSING_BLOCK_LABEL_169;
+        Exception exception;
+        exception;
+        if(streamAFirmar != null)
+            if(throwable != null)
+                try
+                {
+                    streamAFirmar.close();
+                }
+                catch(Throwable x2)
+                {
+                    throwable.addSuppressed(x2);
+                }
+            else
+                streamAFirmar.close();
+        throw exception;
+        Exception ex;
+        ex;
+        System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+        return firmaBase64;
+    }
+
+    public volatile Object run()
+    {
+        return run();
+    }
+
+    String textoAFirmar;
+    String pathAlStore;
+    String passwordDelStore;
+    String alias;
+    final CMSApplet this$0;
+
+    public CMSApplet$7PrivilegedActionListarStore(String textoAFirmarLocal, String pathAlStoreLocal, String passwordDelStoreLocal, String aliasLocal)
+    {
+        this$0 = CMSApplet.this;
+        super();
+        textoAFirmar = null;
+        pathAlStore = null;
+        passwordDelStore = null;
+        alias = null;
+        textoAFirmar = textoAFirmarLocal;
+        pathAlStore = pathAlStoreLocal;
+        passwordDelStore = passwordDelStoreLocal;
+        alias = aliasLocal;
+    }
+}

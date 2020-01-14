@@ -1,0 +1,68 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:07:00 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   PolylineShapeIterator.java
+
+package co.com.pdf.awt.geom;
+
+import co.com.pdf.text.error_messages.MessageLocalization;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
+import java.util.NoSuchElementException;
+
+// Referenced classes of package co.com.pdf.awt.geom:
+//            PolylineShape
+
+public class PolylineShapeIterator
+    implements PathIterator
+{
+
+    PolylineShapeIterator(PolylineShape l, AffineTransform at)
+    {
+        poly = l;
+        affine = at;
+    }
+
+    public int currentSegment(double coords[])
+    {
+        if(isDone())
+            throw new NoSuchElementException(MessageLocalization.getComposedMessage("line.iterator.out.of.bounds", new Object[0]));
+        int type = index != 0 ? 1 : 0;
+        coords[0] = poly.x[index];
+        coords[1] = poly.y[index];
+        if(affine != null)
+            affine.transform(coords, 0, coords, 0, 1);
+        return type;
+    }
+
+    public int currentSegment(float coords[])
+    {
+        if(isDone())
+            throw new NoSuchElementException(MessageLocalization.getComposedMessage("line.iterator.out.of.bounds", new Object[0]));
+        int type = index != 0 ? 1 : 0;
+        coords[0] = poly.x[index];
+        coords[1] = poly.y[index];
+        if(affine != null)
+            affine.transform(coords, 0, coords, 0, 1);
+        return type;
+    }
+
+    public int getWindingRule()
+    {
+        return 1;
+    }
+
+    public boolean isDone()
+    {
+        return index >= poly.np;
+    }
+
+    public void next()
+    {
+        index++;
+    }
+
+    protected PolylineShape poly;
+    protected AffineTransform affine;
+    protected int index;
+}

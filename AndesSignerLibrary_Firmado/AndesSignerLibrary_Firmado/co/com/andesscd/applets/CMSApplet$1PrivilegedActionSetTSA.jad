@@ -1,0 +1,43 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:06:53 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   CMSApplet.java
+
+package co.com.andesscd.applets;
+
+import co.com.andesscd.pki.clases.CMS;
+import java.security.PrivilegedAction;
+
+// Referenced classes of package co.com.andesscd.applets:
+//            CMSApplet
+
+class CMSApplet$1PrivilegedActionSetTSA
+    implements PrivilegedAction
+{
+
+    public String run()
+    {
+        String retorno = "TSA ok";
+        CMS.setFuenteHorariaTSA(urlFuenteHoraria, loginFuenteHoraria, passwordFuenteHoraria);
+        return retorno;
+    }
+
+    public volatile Object run()
+    {
+        return run();
+    }
+
+    String urlFuenteHoraria;
+    String loginFuenteHoraria;
+    String passwordFuenteHoraria;
+
+    public CMSApplet$1PrivilegedActionSetTSA(String urlFuenteHoraria, String loginFuenteHoraria, String passwordFuenteHoraria)
+    {
+        this.urlFuenteHoraria = null;
+        this.loginFuenteHoraria = null;
+        this.passwordFuenteHoraria = null;
+        this.urlFuenteHoraria = urlFuenteHoraria;
+        this.loginFuenteHoraria = loginFuenteHoraria;
+        this.passwordFuenteHoraria = passwordFuenteHoraria;
+    }
+}

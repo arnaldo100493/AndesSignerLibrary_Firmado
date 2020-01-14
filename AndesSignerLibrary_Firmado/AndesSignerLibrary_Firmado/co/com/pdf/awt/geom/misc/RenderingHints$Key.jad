@@ -1,0 +1,38 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:07:01 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   RenderingHints.java
+
+package co.com.pdf.awt.geom.misc;
+
+
+// Referenced classes of package co.com.pdf.awt.geom.misc:
+//            RenderingHints
+
+public static abstract class RenderingHints$Key
+{
+
+    public final boolean equals(Object o)
+    {
+        return this == o;
+    }
+
+    public final int hashCode()
+    {
+        return System.identityHashCode(this);
+    }
+
+    protected final int intKey()
+    {
+        return key;
+    }
+
+    public abstract boolean isCompatibleValue(Object obj);
+
+    private final int key;
+
+    protected RenderingHints$Key(int key)
+    {
+        this.key = key;
+    }
+}

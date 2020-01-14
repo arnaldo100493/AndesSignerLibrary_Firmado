@@ -1,0 +1,79 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:06:53 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   CMSApplet.java
+
+package co.com.andesscd.applets;
+
+import co.com.andesscd.pki.clases.CMS;
+import java.io.PrintStream;
+import java.io.StringWriter;
+import java.security.KeyStore;
+import java.security.PrivilegedAction;
+import java.security.cert.X509Certificate;
+import java.util.*;
+import javax.json.*;
+import javax.security.auth.x500.X500Principal;
+
+// Referenced classes of package co.com.andesscd.applets:
+//            CMSApplet
+
+class CMSApplet$1PrivilegedActionListarStore
+    implements PrivilegedAction
+{
+
+    public String run()
+    {
+        String retorno = "";
+        KeyStore keyStore = null;
+        try
+        {
+            keyStore = abrirStore(pathAlStore, passwordDelStore);
+            System.out.print("Obteniendo lista de certificados...");
+            HashMap certificados = CMS.listarStore(keyStore, passwordDelStore);
+            System.out.println("...OK");
+            System.out.print("Contruyendo JSON...");
+            JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+            JsonObjectBuilder objectBuilder;
+            for(Iterator i$ = certificados.entrySet().iterator(); i$.hasNext(); arrayBuilder.add(objectBuilder))
+            {
+                java.util.Map.Entry entrada = (java.util.Map.Entry)i$.next();
+                objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("alias", (String)entrada.getKey());
+                objectBuilder.add("subject", ((X509Certificate)entrada.getValue()).getSubjectX500Principal().toString());
+                objectBuilder.add("issuer", ((X509Certificate)entrada.getValue()).getIssuerX500Principal().toString());
+            }
+
+            StringWriter stringWriter = new StringWriter();
+            JsonWriter jsonWriter = Json.createWriter(stringWriter);
+            jsonWriter.writeArray(arrayBuilder.build());
+            jsonWriter.close();
+            System.out.println("...OK");
+            retorno = stringWriter.toString();
+        }
+        catch(Exception ex)
+        {
+            System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+        }
+        return retorno;
+    }
+
+    public volatile Object run()
+    {
+        return run();
+    }
+
+    String pathAlStore;
+    String passwordDelStore;
+    final CMSApplet this$0;
+
+    public CMSApplet$1PrivilegedActionListarStore(String pathAlStoreLocal, String passwordDelStoreLocal)
+    {
+        this$0 = CMSApplet.this;
+        super();
+        pathAlStore = null;
+        passwordDelStore = null;
+        pathAlStore = pathAlStoreLocal;
+        passwordDelStore = passwordDelStoreLocal;
+    }
+}

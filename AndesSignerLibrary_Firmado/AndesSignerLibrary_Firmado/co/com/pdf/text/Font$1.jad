@@ -1,0 +1,46 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:07:02 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   Font.java
+
+package co.com.pdf.text;
+
+
+// Referenced classes of package co.com.pdf.text:
+//            Font
+
+static class Font$1
+{
+
+    static final int $SwitchMap$co$com$pdf$text$Font$FontFamily[];
+
+    static 
+    {
+        $SwitchMap$co$com$pdf$text$Font$FontFamily = new int[ntFamily.values().length];
+        try
+        {
+            $SwitchMap$co$com$pdf$text$Font$FontFamily[ntFamily.COURIER.ordinal()] = 1;
+        }
+        catch(NoSuchFieldError ex) { }
+        try
+        {
+            $SwitchMap$co$com$pdf$text$Font$FontFamily[ntFamily.HELVETICA.ordinal()] = 2;
+        }
+        catch(NoSuchFieldError ex) { }
+        try
+        {
+            $SwitchMap$co$com$pdf$text$Font$FontFamily[ntFamily.TIMES_ROMAN.ordinal()] = 3;
+        }
+        catch(NoSuchFieldError ex) { }
+        try
+        {
+            $SwitchMap$co$com$pdf$text$Font$FontFamily[ntFamily.SYMBOL.ordinal()] = 4;
+        }
+        catch(NoSuchFieldError ex) { }
+        try
+        {
+            $SwitchMap$co$com$pdf$text$Font$FontFamily[ntFamily.ZAPFDINGBATS.ordinal()] = 5;
+        }
+        catch(NoSuchFieldError ex) { }
+    }
+}

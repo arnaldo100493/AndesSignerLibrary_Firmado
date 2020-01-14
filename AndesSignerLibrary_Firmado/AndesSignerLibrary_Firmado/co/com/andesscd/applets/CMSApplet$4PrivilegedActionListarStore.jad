@@ -1,0 +1,162 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:06:53 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   CMSApplet.java
+
+package co.com.andesscd.applets;
+
+import java.io.*;
+import java.security.PrivilegedAction;
+import org.apache.commons.io.FilenameUtils;
+
+// Referenced classes of package co.com.andesscd.applets:
+//            CMSApplet
+
+class CMSApplet$4PrivilegedActionListarStore
+    implements PrivilegedAction
+{
+
+    public String run()
+    {
+        String firmaBase64 = "";
+        FileInputStream archivoAFirmar;
+        FileOutputStream archivoSalida;
+        System.out.print("Determinando exitencia del archivo a firmar...");
+        File archivo = new File(pathAlArchivo);
+        if(!archivo.exists())
+            throw new FileNotFoundException((new StringBuilder()).append("No existe el archivo ").append(pathAlArchivo).toString());
+        System.out.println("...OK");
+        archivoAFirmar = new FileInputStream(archivo);
+        archivoSalida = null;
+        ByteArrayOutputStream firmaBinaria;
+        try
+        {
+            firmaBinaria = new ByteArrayOutputStream();
+            boolean firmarComoPdf;
+            if(FilenameUtils.getExtension(pathAlArchivo).compareToIgnoreCase("pdf") == 0)
+            {
+                System.out.print("Firmando en formato PDF...");
+                firmarComoPdf = true;
+            } else
+            {
+                System.out.print("Firmando en formato PKCS7...");
+                firmarComoPdf = false;
+            }
+            firmaBase64 = firmarStream(archivoAFirmar, pathAlStore, passwordDelStore, alias, firmarComoPdf, firmaBinaria);
+            System.out.println("...OK");
+        }
+        catch(Throwable throwable)
+        {
+            archivoSalida = throwable;
+            throw throwable;
+        }
+        if(archivoAFirmar != null)
+            if(archivoSalida != null)
+                try
+                {
+                    archivoAFirmar.close();
+                }
+                catch(Throwable x2)
+                {
+                    archivoSalida.addSuppressed(x2);
+                }
+            else
+                archivoAFirmar.close();
+        break MISSING_BLOCK_LABEL_249;
+        Exception exception;
+        exception;
+        if(archivoAFirmar != null)
+            if(archivoSalida != null)
+                try
+                {
+                    archivoAFirmar.close();
+                }
+                catch(Throwable x2)
+                {
+                    archivoSalida.addSuppressed(x2);
+                }
+            else
+                archivoAFirmar.close();
+        throw exception;
+        Throwable throwable1;
+        String nombreArchivoSalida;
+        if(FilenameUtils.getExtension(pathAlArchivo).compareToIgnoreCase("pdf") == 0)
+        {
+            System.out.print("Guardando firma PDF a disco...");
+            nombreArchivoSalida = pathAlArchivo.replace(FilenameUtils.getBaseName(pathAlArchivo), (new StringBuilder()).append(FilenameUtils.getBaseName(pathAlArchivo)).append("_firmado").toString());
+        } else
+        {
+            System.out.print("Guardando firma PKCS7 a disco...");
+            nombreArchivoSalida = (new StringBuilder()).append(pathAlArchivo).append(".p7s").toString();
+        }
+        archivoSalida = new FileOutputStream(nombreArchivoSalida);
+        throwable1 = null;
+        try
+        {
+            archivoSalida.write(firmaBinaria.toByteArray());
+            System.out.println("...OK");
+        }
+        catch(Throwable throwable2)
+        {
+            throwable1 = throwable2;
+            throw throwable2;
+        }
+        if(archivoSalida != null)
+            if(throwable1 != null)
+                try
+                {
+                    archivoSalida.close();
+                }
+                catch(Throwable x2)
+                {
+                    throwable1.addSuppressed(x2);
+                }
+            else
+                archivoSalida.close();
+        break MISSING_BLOCK_LABEL_498;
+        Exception exception1;
+        exception1;
+        if(archivoSalida != null)
+            if(throwable1 != null)
+                try
+                {
+                    archivoSalida.close();
+                }
+                catch(Throwable x2)
+                {
+                    throwable1.addSuppressed(x2);
+                }
+            else
+                archivoSalida.close();
+        throw exception1;
+        Exception ex;
+        ex;
+        System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+        return firmaBase64;
+    }
+
+    public volatile Object run()
+    {
+        return run();
+    }
+
+    String pathAlArchivo;
+    String pathAlStore;
+    String passwordDelStore;
+    String alias;
+    final CMSApplet this$0;
+
+    public CMSApplet$4PrivilegedActionListarStore(String pathAlArchivoLocal, String pathAlStoreLocal, String passwordDelStoreLocal, String aliasLocal)
+    {
+        this$0 = CMSApplet.this;
+        super();
+        pathAlArchivo = null;
+        pathAlStore = null;
+        passwordDelStore = null;
+        alias = null;
+        pathAlStore = pathAlStoreLocal;
+        passwordDelStore = passwordDelStoreLocal;
+        pathAlArchivo = pathAlArchivoLocal;
+        alias = aliasLocal;
+    }
+}

@@ -1,0 +1,29 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:07:03 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   Jpeg2000.java
+
+package co.com.pdf.text;
+
+import java.io.IOException;
+
+// Referenced classes of package co.com.pdf.text:
+//            Jpeg2000
+
+private class Jpeg2000$ZeroBoxSizeException extends IOException
+{
+
+    final Jpeg2000 this$0;
+
+    public Jpeg2000$ZeroBoxSizeException()
+    {
+        this$0 = Jpeg2000.this;
+        super();
+    }
+
+    public Jpeg2000$ZeroBoxSizeException(String s)
+    {
+        this$0 = Jpeg2000.this;
+        super(s);
+    }
+}

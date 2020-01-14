@@ -1,0 +1,56 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:06:53 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   CMSApplet.java
+
+package co.com.andesscd.applets;
+
+import java.io.File;
+import java.io.PrintStream;
+import java.security.PrivilegedAction;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+// Referenced classes of package co.com.andesscd.applets:
+//            CMSApplet
+
+class CMSApplet$2
+    implements PrivilegedAction
+{
+
+    public String run()
+    {
+        String archivo = "";
+        System.out.print("Abriendo dialogo y seleccionando archivo...");
+        JFileChooser fc = new JFileChooser();
+        if(val$descripcionExtenciones != null && !val$descripcionExtenciones.isEmpty())
+        {
+            fc.removeChoosableFileFilter(fc.getFileFilter());
+            fc.setFileFilter(new FileNameExtensionFilter(val$descripcionExtenciones, val$extenciones));
+        }
+        if(fc.showOpenDialog(null) == 0)
+        {
+            File file = fc.getSelectedFile();
+            archivo = file.getAbsolutePath();
+        }
+        System.out.println("...OK");
+        return archivo;
+    }
+
+    public volatile Object run()
+    {
+        return run();
+    }
+
+    final String val$descripcionExtenciones;
+    final String val$extenciones[];
+    final CMSApplet this$0;
+
+    CMSApplet$2()
+    {
+        this$0 = final_cmsapplet;
+        val$descripcionExtenciones = s;
+        val$extenciones = _5B_Ljava.lang.String_3B_.this;
+        super();
+    }
+}

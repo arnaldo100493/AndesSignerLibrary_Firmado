@@ -1,0 +1,88 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:06:53 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   CMSApplet.java
+
+package co.com.andesscd.applets;
+
+import co.com.andesscd.pki.clases.CMS;
+import java.io.*;
+import java.security.KeyStore;
+import java.security.PrivilegedAction;
+
+// Referenced classes of package co.com.andesscd.applets:
+//            CMSApplet
+
+class CMSApplet$3PrivilegedActionListarStore
+    implements PrivilegedAction
+{
+
+    public byte[] run()
+    {
+        byte firma[] = null;
+        KeyStore keyStore = null;
+        try
+        {
+            if(alias == null || alias.isEmpty())
+                throw new Exception("No se proporciono alias del store");
+            keyStore = abrirStore(pathAlStore, passwordDelStore);
+            ByteArrayOutputStream firmaBinaria = new ByteArrayOutputStream();
+            CMS miCMS = new CMS(streamAFirmar);
+            if(firmarComoPdf)
+            {
+                System.out.print("Firmando en formato PDF...");
+                miCMS.firmarPdf(keyStore, alias, passwordDelStore, firmaBinaria);
+            } else
+            {
+                System.out.print("Firmando en formato PKCS7...");
+                miCMS.firmar(keyStore, alias, passwordDelStore, firmaBinaria);
+            }
+            System.out.println("...OK");
+            System.out.print("Obteniendo la firma en array de byte...");
+            firma = firmaBinaria.toByteArray();
+            System.out.println("...OK");
+            if(streamSalida != null)
+            {
+                System.out.print("Guardando firma en stream...");
+                streamSalida.write(firma);
+                System.out.println("...OK");
+            }
+        }
+        catch(Exception ex)
+        {
+            System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+        }
+        return firma;
+    }
+
+    public volatile Object run()
+    {
+        return run();
+    }
+
+    InputStream streamAFirmar;
+    String pathAlStore;
+    String passwordDelStore;
+    String alias;
+    OutputStream streamSalida;
+    boolean firmarComoPdf;
+    final CMSApplet this$0;
+
+    public CMSApplet$3PrivilegedActionListarStore(InputStream streamAFirmarLocal, String pathAlStoreLocal, String passwordDelStoreLocal, String aliasLocal, boolean firmarComoPdfLocal, OutputStream streamSalidaLocal)
+    {
+        this$0 = CMSApplet.this;
+        super();
+        streamAFirmar = null;
+        pathAlStore = null;
+        passwordDelStore = null;
+        alias = null;
+        streamSalida = null;
+        firmarComoPdf = false;
+        pathAlStore = pathAlStoreLocal;
+        passwordDelStore = passwordDelStoreLocal;
+        streamAFirmar = streamAFirmarLocal;
+        streamSalida = streamSalidaLocal;
+        alias = aliasLocal;
+        firmarComoPdf = firmarComoPdfLocal;
+    }
+}

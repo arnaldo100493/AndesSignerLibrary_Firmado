@@ -1,0 +1,107 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:06:53 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   CMSApplet.java
+
+package co.com.andesscd.applets;
+
+import co.com.andesscd.pki.clases.CMS;
+import co.com.andesscd.pki.clases.RESULTADO_VERIFICACION;
+import java.io.*;
+import java.security.PrivilegedAction;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.io.FilenameUtils;
+
+// Referenced classes of package co.com.andesscd.applets:
+//            CMSApplet
+
+class CMSApplet$8PrivilegedActionListarStore
+    implements PrivilegedAction
+{
+
+    public RESULTADO_VERIFICACION run()
+    {
+        FileInputStream archivoAVerificar;
+        RESULTADO_VERIFICACION resultadoVerificacion;
+        archivoAVerificar = null;
+        resultadoVerificacion = RESULTADO_VERIFICACION.ERROR_DESCONOCIDO;
+        System.out.print("Determinando exitencia del archivo a verificar...");
+        File archivo = new File(pathAlArchivo);
+        if(!archivo.exists())
+            throw new FileNotFoundException((new StringBuilder()).append("No existe el archivo ").append(pathAlArchivo).toString());
+        System.out.println("...OK");
+        archivoAVerificar = new FileInputStream(archivo);
+        CMS miCMS = new CMS(archivoAVerificar);
+        if(FilenameUtils.getExtension(pathAlArchivo).compareToIgnoreCase("pdf") == 0)
+        {
+            System.out.print("Verificando en formato PDF...");
+            resultadoVerificacion = miCMS.verificarPdf(null);
+            System.out.println("...OK");
+        } else
+        if(FilenameUtils.getExtension(pathAlArchivo).compareToIgnoreCase("p7s") == 0)
+        {
+            System.out.print("Verificando en formato PKCS7...");
+            miCMS.decode(new FileOutputStream(FilenameUtils.removeExtension(pathAlArchivo)));
+            resultadoVerificacion = miCMS.verificar(null, false);
+            System.out.println("...OK");
+        } else
+        {
+            System.out.println("El archivo firmado debe tener extencion pdf o p7s para poder ser verificado.");
+        }
+        Exception ex;
+        if(archivoAVerificar != null)
+            try
+            {
+                archivoAVerificar.close();
+            }
+            // Misplaced declaration of an exception variable
+            catch(Exception ex)
+            {
+                Logger.getLogger(co/com/andesscd/applets/CMSApplet.getName()).log(Level.SEVERE, null, ex);
+            }
+        break MISSING_BLOCK_LABEL_335;
+        ex;
+        System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+        if(archivoAVerificar != null)
+            try
+            {
+                archivoAVerificar.close();
+            }
+            // Misplaced declaration of an exception variable
+            catch(Exception ex)
+            {
+                Logger.getLogger(co/com/andesscd/applets/CMSApplet.getName()).log(Level.SEVERE, null, ex);
+            }
+        break MISSING_BLOCK_LABEL_335;
+        Exception exception;
+        exception;
+        if(archivoAVerificar != null)
+            try
+            {
+                archivoAVerificar.close();
+            }
+            catch(IOException ex)
+            {
+                Logger.getLogger(co/com/andesscd/applets/CMSApplet.getName()).log(Level.SEVERE, null, ex);
+            }
+        throw exception;
+        return resultadoVerificacion;
+    }
+
+    public volatile Object run()
+    {
+        return run();
+    }
+
+    String pathAlArchivo;
+    final CMSApplet this$0;
+
+    public CMSApplet$8PrivilegedActionListarStore(String pathAlArchivoLocal)
+    {
+        this$0 = CMSApplet.this;
+        super();
+        pathAlArchivo = null;
+        pathAlArchivo = pathAlArchivoLocal;
+    }
+}

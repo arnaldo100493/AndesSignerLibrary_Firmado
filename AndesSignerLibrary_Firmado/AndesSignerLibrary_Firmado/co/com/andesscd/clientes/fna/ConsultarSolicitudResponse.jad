@@ -1,0 +1,38 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:06:55 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   ConsultarSolicitudResponse.java
+
+package co.com.andesscd.clientes.fna;
+
+
+public class ConsultarSolicitudResponse
+{
+
+    public ConsultarSolicitudResponse()
+    {
+    }
+
+    public int getEstado()
+    {
+        return estado;
+    }
+
+    public void setEstado(int value)
+    {
+        estado = value;
+    }
+
+    public String getMensaje()
+    {
+        return mensaje;
+    }
+
+    public void setMensaje(String value)
+    {
+        mensaje = value;
+    }
+
+    protected int estado;
+    protected String mensaje;
+}

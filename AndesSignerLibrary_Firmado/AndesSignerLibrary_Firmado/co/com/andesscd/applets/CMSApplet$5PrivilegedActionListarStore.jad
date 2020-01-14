@@ -1,0 +1,98 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:06:53 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   CMSApplet.java
+
+package co.com.andesscd.applets;
+
+import co.com.andesscd.Base64Coder;
+import java.io.*;
+import java.security.PrivilegedAction;
+
+// Referenced classes of package co.com.andesscd.applets:
+//            CMSApplet
+
+class CMSApplet$5PrivilegedActionListarStore
+    implements PrivilegedAction
+{
+
+    public String run()
+    {
+        String firmaBase64 = "";
+        ByteArrayInputStream archivoAFirmar;
+        Throwable throwable;
+        archivoAFirmar = new ByteArrayInputStream(Base64Coder.decode(datosBase64));
+        throwable = null;
+        try
+        {
+            ByteArrayOutputStream firmaBinaria = new ByteArrayOutputStream();
+            firmaBase64 = firmarStream(archivoAFirmar, pathAlStore, passwordDelStore, alias, firmarComoPdf, firmaBinaria);
+            System.out.println("...OK");
+        }
+        catch(Throwable throwable1)
+        {
+            throwable = throwable1;
+            throw throwable1;
+        }
+        if(archivoAFirmar != null)
+            if(throwable != null)
+                try
+                {
+                    archivoAFirmar.close();
+                }
+                catch(Throwable x2)
+                {
+                    throwable.addSuppressed(x2);
+                }
+            else
+                archivoAFirmar.close();
+        break MISSING_BLOCK_LABEL_176;
+        Exception exception;
+        exception;
+        if(archivoAFirmar != null)
+            if(throwable != null)
+                try
+                {
+                    archivoAFirmar.close();
+                }
+                catch(Throwable x2)
+                {
+                    throwable.addSuppressed(x2);
+                }
+            else
+                archivoAFirmar.close();
+        throw exception;
+        Exception ex;
+        ex;
+        System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+        return firmaBase64;
+    }
+
+    public volatile Object run()
+    {
+        return run();
+    }
+
+    String datosBase64;
+    String pathAlStore;
+    String passwordDelStore;
+    String alias;
+    boolean firmarComoPdf;
+    final CMSApplet this$0;
+
+    public CMSApplet$5PrivilegedActionListarStore(String datosBase64Local, String pathAlStoreLocal, String passwordDelStoreLocal, String aliasLocal, boolean firmarComoPdfLocal)
+    {
+        this$0 = CMSApplet.this;
+        super();
+        datosBase64 = null;
+        pathAlStore = null;
+        passwordDelStore = null;
+        alias = null;
+        firmarComoPdf = false;
+        pathAlStore = pathAlStoreLocal;
+        passwordDelStore = passwordDelStoreLocal;
+        datosBase64 = datosBase64Local;
+        alias = aliasLocal;
+        firmarComoPdf = firmarComoPdfLocal;
+    }
+}

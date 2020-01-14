@@ -1,0 +1,30 @@
+// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
+// Jad home page: http://www.kpdus.com/jad.html
+// Decompiler options: packimports(3) 
+// Source File Name:   PasswordAuthentication.java
+
+package javax.mail;
+
+
+public final class PasswordAuthentication
+{
+
+    public PasswordAuthentication(String userName, String password)
+    {
+        this.userName = userName;
+        this.password = password;
+    }
+
+    public String getUserName()
+    {
+        return userName;
+    }
+
+    public String getPassword()
+    {
+        return password;
+    }
+
+    private final String userName;
+    private final String password;
+}

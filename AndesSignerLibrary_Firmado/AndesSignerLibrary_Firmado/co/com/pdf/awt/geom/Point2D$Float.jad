@@ -1,0 +1,54 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:07:00 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   Point2D.java
+
+package co.com.pdf.awt.geom;
+
+
+// Referenced classes of package co.com.pdf.awt.geom:
+//            Point2D
+
+public static class Point2D$Float extends Point2D
+{
+
+    public double getX()
+    {
+        return (double)x;
+    }
+
+    public double getY()
+    {
+        return (double)y;
+    }
+
+    public void setLocation(float x, float y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void setLocation(double x, double y)
+    {
+        this.x = (float)x;
+        this.y = (float)y;
+    }
+
+    public String toString()
+    {
+        return (new StringBuilder()).append(getClass().getName()).append("[x=").append(x).append(",y=").append(y).append("]").toString();
+    }
+
+    public float x;
+    public float y;
+
+    public Point2D$Float()
+    {
+    }
+
+    public Point2D$Float(float x, float y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+}

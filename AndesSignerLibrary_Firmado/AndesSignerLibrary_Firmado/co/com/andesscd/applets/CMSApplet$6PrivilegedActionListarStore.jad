@@ -1,0 +1,88 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:06:53 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   CMSApplet.java
+
+package co.com.andesscd.applets;
+
+import co.com.andesscd.Base64Coder;
+import java.io.*;
+import java.security.PrivilegedAction;
+import java.util.zip.*;
+
+// Referenced classes of package co.com.andesscd.applets:
+//            CMSApplet
+
+class CMSApplet$6PrivilegedActionListarStore
+    implements PrivilegedAction
+{
+
+    public String run()
+    {
+        String zipSalidaBase64 = "";
+        try
+        {
+            int BUFFER = 1024;
+            byte data[] = new byte[BUFFER];
+            ByteArrayInputStream fis = new ByteArrayInputStream(Base64Coder.decode(zipBase64));
+            ZipInputStream zipEntrada = new ZipInputStream(new BufferedInputStream(fis));
+            ByteArrayOutputStream zipEnBytes = new ByteArrayOutputStream();
+            ZipOutputStream zipSalida = new ZipOutputStream(zipEnBytes);
+            ZipEntry entryZipEntrada;
+            while((entryZipEntrada = zipEntrada.getNextEntry()) != null) 
+            {
+                ByteArrayOutputStream archivoEnBytes = new ByteArrayOutputStream();
+                int count;
+                while((count = zipEntrada.read(data, 0, BUFFER)) != -1) 
+                    archivoEnBytes.write(data, 0, count);
+                ByteArrayOutputStream firmaBinaria = null;
+                byte firmaEnBytes[] = firmarStreamEnBinario(new ByteArrayInputStream(archivoEnBytes.toByteArray()), pathAlStore, passwordDelStore, alias, firmarComoPdf, firmaBinaria);
+                archivoEnBytes.close();
+                ZipEntry entryZipSalida = new ZipEntry(entryZipEntrada.getName());
+                zipSalida.putNextEntry(entryZipSalida);
+                zipSalida.write(firmaEnBytes);
+                System.out.println("...OK");
+            }
+            zipEntrada.close();
+            zipSalida.close();
+            zipEnBytes.flush();
+            System.out.print("Creando base 64 del zip");
+            zipSalidaBase64 = new String(Base64Coder.encode(zipEnBytes.toByteArray()));
+            System.out.print("... OK");
+            zipEnBytes.close();
+        }
+        catch(Exception ex)
+        {
+            System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+        }
+        return zipSalidaBase64;
+    }
+
+    public volatile Object run()
+    {
+        return run();
+    }
+
+    String zipBase64;
+    String pathAlStore;
+    String passwordDelStore;
+    String alias;
+    boolean firmarComoPdf;
+    final CMSApplet this$0;
+
+    public CMSApplet$6PrivilegedActionListarStore(String zipBase64Local, String pathAlStoreLocal, String passwordDelStoreLocal, String aliasLocal, boolean firmarComoPdfLocal)
+    {
+        this$0 = CMSApplet.this;
+        super();
+        zipBase64 = null;
+        pathAlStore = null;
+        passwordDelStore = null;
+        alias = null;
+        firmarComoPdf = false;
+        pathAlStore = pathAlStoreLocal;
+        passwordDelStore = passwordDelStoreLocal;
+        zipBase64 = zipBase64Local;
+        alias = aliasLocal;
+        firmarComoPdf = firmarComoPdfLocal;
+    }
+}

@@ -1,0 +1,894 @@
+// Decompiled by DJ v3.12.12.98 Copyright 2014 Atanas Neshkov  Date: 17/11/2017 7:06:53 p. m.
+// Home Page: http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   CMSApplet.java
+
+package co.com.andesscd.applets;
+
+import co.com.andesscd.Base64Coder;
+import co.com.andesscd.pki.clases.CMS;
+import co.com.andesscd.pki.clases.RESULTADO_VERIFICACION;
+import co.org.bouncy.jce.provider.BouncyCastleProvider;
+import java.applet.Applet;
+import java.io.*;
+import java.security.*;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.*;
+import javax.json.*;
+import javax.security.auth.x500.X500Principal;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.commons.io.FilenameUtils;
+
+public class CMSApplet extends Applet
+{
+
+    public CMSApplet()
+    {
+    }
+
+    public void init()
+    {
+        AccessController.doPrivileged(new PrivilegedAction() {
+
+            public Object run()
+            {
+                try
+                {
+                    System.out.print("Agregando provedor de seguridad por defecto...");
+                    Security.addProvider(new BouncyCastleProvider());
+                    System.out.println("...OK");
+                }
+                catch(Exception ex)
+                {
+                    System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+                }
+                return null;
+            }
+
+            final CMSApplet this$0;
+
+            
+            {
+                this$0 = CMSApplet.this;
+                super();
+            }
+        }
+);
+    }
+
+    public static void setFuenteHorariaTSA(String urlFuenteHoraria, String loginFuenteHoraria, String passwordFuenteHoraria)
+    {
+        class _cls1PrivilegedActionSetTSA
+            implements PrivilegedAction
+        {
+
+            public String run()
+            {
+                String retorno = "TSA ok";
+                CMS.setFuenteHorariaTSA(urlFuenteHoraria, loginFuenteHoraria, passwordFuenteHoraria);
+                return retorno;
+            }
+
+            public volatile Object run()
+            {
+                return run();
+            }
+
+            String urlFuenteHoraria;
+            String loginFuenteHoraria;
+            String passwordFuenteHoraria;
+
+            public _cls1PrivilegedActionSetTSA(String urlFuenteHoraria, String loginFuenteHoraria, String passwordFuenteHoraria)
+            {
+                this.urlFuenteHoraria = null;
+                this.loginFuenteHoraria = null;
+                this.passwordFuenteHoraria = null;
+                this.urlFuenteHoraria = urlFuenteHoraria;
+                this.loginFuenteHoraria = loginFuenteHoraria;
+                this.passwordFuenteHoraria = passwordFuenteHoraria;
+            }
+        }
+
+        AccessController.doPrivileged(new _cls1PrivilegedActionSetTSA(urlFuenteHoraria, loginFuenteHoraria, passwordFuenteHoraria));
+    }
+
+    public transient String getFilePath(final String descripcionExtenciones, final String extenciones[])
+    {
+        return (String)AccessController.doPrivileged(new PrivilegedAction() {
+
+            public String run()
+            {
+                String archivo = "";
+                System.out.print("Abriendo dialogo y seleccionando archivo...");
+                JFileChooser fc = new JFileChooser();
+                if(descripcionExtenciones != null && !descripcionExtenciones.isEmpty())
+                {
+                    fc.removeChoosableFileFilter(fc.getFileFilter());
+                    fc.setFileFilter(new FileNameExtensionFilter(descripcionExtenciones, extenciones));
+                }
+                if(fc.showOpenDialog(null) == 0)
+                {
+                    File file = fc.getSelectedFile();
+                    archivo = file.getAbsolutePath();
+                }
+                System.out.println("...OK");
+                return archivo;
+            }
+
+            public volatile Object run()
+            {
+                return run();
+            }
+
+            final String val$descripcionExtenciones;
+            final String val$extenciones[];
+            final CMSApplet this$0;
+
+            
+            {
+                this$0 = CMSApplet.this;
+                descripcionExtenciones = s;
+                extenciones = as;
+                super();
+            }
+        }
+);
+    }
+
+    protected KeyStore abrirStore(String pathAlStore, String passwordDelStore)
+        throws FileNotFoundException, KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException
+    {
+        KeyStore keyStore = null;
+        if(pathAlStore != null && !pathAlStore.trim().isEmpty())
+        {
+            System.out.print("Determinando exitencia del store...");
+            File archivo = new File(pathAlStore);
+            if(!archivo.exists())
+                throw new FileNotFoundException((new StringBuilder()).append("No existe el archivo ").append(pathAlStore).toString());
+            System.out.println("...OK");
+            String ext = FilenameUtils.getExtension(pathAlStore).toLowerCase();
+            if(ext.compareToIgnoreCase("p12") == 0 || ext.compareToIgnoreCase("pfx") == 0)
+            {
+                System.out.print("El estore posee extension pkcs12, intentando abrir...");
+                keyStore = KeyStore.getInstance("pkcs12");
+                keyStore.load(new FileInputStream(archivo), passwordDelStore.toCharArray());
+                System.out.println("...OK");
+            }
+        }
+        return keyStore;
+    }
+
+    public String listarStore(String pathAlStore, String passwordDelStore)
+    {
+        class _cls1PrivilegedActionListarStore
+            implements PrivilegedAction
+        {
+
+            public String run()
+            {
+                String retorno = "";
+                KeyStore keyStore = null;
+                try
+                {
+                    keyStore = abrirStore(pathAlStore, passwordDelStore);
+                    System.out.print("Obteniendo lista de certificados...");
+                    HashMap certificados = CMS.listarStore(keyStore, passwordDelStore);
+                    System.out.println("...OK");
+                    System.out.print("Contruyendo JSON...");
+                    JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+                    JsonObjectBuilder objectBuilder;
+                    for(Iterator i$ = certificados.entrySet().iterator(); i$.hasNext(); arrayBuilder.add(objectBuilder))
+                    {
+                        java.util.Map.Entry entrada = (java.util.Map.Entry)i$.next();
+                        objectBuilder = Json.createObjectBuilder();
+                        objectBuilder.add("alias", (String)entrada.getKey());
+                        objectBuilder.add("subject", ((X509Certificate)entrada.getValue()).getSubjectX500Principal().toString());
+                        objectBuilder.add("issuer", ((X509Certificate)entrada.getValue()).getIssuerX500Principal().toString());
+                    }
+
+                    StringWriter stringWriter = new StringWriter();
+                    JsonWriter jsonWriter = Json.createWriter(stringWriter);
+                    jsonWriter.writeArray(arrayBuilder.build());
+                    jsonWriter.close();
+                    System.out.println("...OK");
+                    retorno = stringWriter.toString();
+                }
+                catch(Exception ex)
+                {
+                    System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+                }
+                return retorno;
+            }
+
+            public volatile Object run()
+            {
+                return run();
+            }
+
+            String pathAlStore;
+            String passwordDelStore;
+            final CMSApplet this$0;
+
+            public _cls1PrivilegedActionListarStore(String pathAlStoreLocal, String passwordDelStoreLocal)
+            {
+                this$0 = CMSApplet.this;
+                super();
+                pathAlStore = null;
+                passwordDelStore = null;
+                pathAlStore = pathAlStoreLocal;
+                passwordDelStore = passwordDelStoreLocal;
+            }
+        }
+
+        return (String)AccessController.doPrivileged(new _cls1PrivilegedActionListarStore(pathAlStore, passwordDelStore));
+    }
+
+    protected String firmarStream(InputStream streamAFirmar, String pathAlStore, String passwordDelStore, String alias, boolean firmarComoPdf, OutputStream streamSalida)
+    {
+        class _cls2PrivilegedActionListarStore
+            implements PrivilegedAction
+        {
+
+            public String run()
+            {
+                String firmaBase64 = "";
+                KeyStore keyStore = null;
+                try
+                {
+                    if(alias == null || alias.isEmpty())
+                        throw new Exception("No se proporciono alias del store");
+                    keyStore = abrirStore(pathAlStore, passwordDelStore);
+                    ByteArrayOutputStream firmaBinaria = new ByteArrayOutputStream();
+                    CMS miCMS = new CMS(streamAFirmar);
+                    if(firmarComoPdf)
+                    {
+                        System.out.print("Firmando en formato PDF...");
+                        miCMS.firmarPdf(keyStore, alias, passwordDelStore, firmaBinaria);
+                    } else
+                    {
+                        System.out.print("Firmando en formato PKCS7...");
+                        miCMS.firmar(keyStore, alias, passwordDelStore, firmaBinaria);
+                    }
+                    System.out.println("...OK");
+                    System.out.print("Obteniendo la base 64 de la firma...");
+                    byte arrayBytesFirma[] = firmaBinaria.toByteArray();
+                    firmaBase64 = new String(Base64Coder.encode(arrayBytesFirma));
+                    System.out.println("...OK");
+                    if(streamSalida != null)
+                    {
+                        System.out.print("Guardando firma en stream...");
+                        streamSalida.write(arrayBytesFirma);
+                        System.out.println("...OK");
+                    }
+                }
+                catch(Exception ex)
+                {
+                    System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+                }
+                return firmaBase64;
+            }
+
+            public volatile Object run()
+            {
+                return run();
+            }
+
+            InputStream streamAFirmar;
+            String pathAlStore;
+            String passwordDelStore;
+            String alias;
+            OutputStream streamSalida;
+            boolean firmarComoPdf;
+            final CMSApplet this$0;
+
+            public _cls2PrivilegedActionListarStore(InputStream streamAFirmarLocal, String pathAlStoreLocal, String passwordDelStoreLocal, String aliasLocal, boolean firmarComoPdfLocal, OutputStream streamSalidaLocal)
+            {
+                this$0 = CMSApplet.this;
+                super();
+                streamAFirmar = null;
+                pathAlStore = null;
+                passwordDelStore = null;
+                alias = null;
+                streamSalida = null;
+                firmarComoPdf = false;
+                pathAlStore = pathAlStoreLocal;
+                passwordDelStore = passwordDelStoreLocal;
+                streamAFirmar = streamAFirmarLocal;
+                streamSalida = streamSalidaLocal;
+                alias = aliasLocal;
+                firmarComoPdf = firmarComoPdfLocal;
+            }
+        }
+
+        return (String)AccessController.doPrivileged(new _cls2PrivilegedActionListarStore(streamAFirmar, pathAlStore, passwordDelStore, alias, firmarComoPdf, streamSalida));
+    }
+
+    protected byte[] firmarStreamEnBinario(InputStream streamAFirmar, String pathAlStore, String passwordDelStore, String alias, boolean firmarComoPdf, OutputStream streamSalida)
+    {
+        class _cls3PrivilegedActionListarStore
+            implements PrivilegedAction
+        {
+
+            public byte[] run()
+            {
+                byte firma[] = null;
+                KeyStore keyStore = null;
+                try
+                {
+                    if(alias == null || alias.isEmpty())
+                        throw new Exception("No se proporciono alias del store");
+                    keyStore = abrirStore(pathAlStore, passwordDelStore);
+                    ByteArrayOutputStream firmaBinaria = new ByteArrayOutputStream();
+                    CMS miCMS = new CMS(streamAFirmar);
+                    if(firmarComoPdf)
+                    {
+                        System.out.print("Firmando en formato PDF...");
+                        miCMS.firmarPdf(keyStore, alias, passwordDelStore, firmaBinaria);
+                    } else
+                    {
+                        System.out.print("Firmando en formato PKCS7...");
+                        miCMS.firmar(keyStore, alias, passwordDelStore, firmaBinaria);
+                    }
+                    System.out.println("...OK");
+                    System.out.print("Obteniendo la firma en array de byte...");
+                    firma = firmaBinaria.toByteArray();
+                    System.out.println("...OK");
+                    if(streamSalida != null)
+                    {
+                        System.out.print("Guardando firma en stream...");
+                        streamSalida.write(firma);
+                        System.out.println("...OK");
+                    }
+                }
+                catch(Exception ex)
+                {
+                    System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+                }
+                return firma;
+            }
+
+            public volatile Object run()
+            {
+                return run();
+            }
+
+            InputStream streamAFirmar;
+            String pathAlStore;
+            String passwordDelStore;
+            String alias;
+            OutputStream streamSalida;
+            boolean firmarComoPdf;
+            final CMSApplet this$0;
+
+            public _cls3PrivilegedActionListarStore(InputStream streamAFirmarLocal, String pathAlStoreLocal, String passwordDelStoreLocal, String aliasLocal, boolean firmarComoPdfLocal, OutputStream streamSalidaLocal)
+            {
+                this$0 = CMSApplet.this;
+                super();
+                streamAFirmar = null;
+                pathAlStore = null;
+                passwordDelStore = null;
+                alias = null;
+                streamSalida = null;
+                firmarComoPdf = false;
+                pathAlStore = pathAlStoreLocal;
+                passwordDelStore = passwordDelStoreLocal;
+                streamAFirmar = streamAFirmarLocal;
+                streamSalida = streamSalidaLocal;
+                alias = aliasLocal;
+                firmarComoPdf = firmarComoPdfLocal;
+            }
+        }
+
+        return (byte[])AccessController.doPrivileged(new _cls3PrivilegedActionListarStore(streamAFirmar, pathAlStore, passwordDelStore, alias, firmarComoPdf, streamSalida));
+    }
+
+    public String firmarArchivo(String pathAlArchivo, String pathAlStore, String passwordDelStore, String alias)
+    {
+        class _cls4PrivilegedActionListarStore
+            implements PrivilegedAction
+        {
+
+            public String run()
+            {
+                String firmaBase64 = "";
+                FileInputStream archivoAFirmar;
+                FileOutputStream archivoSalida;
+                System.out.print("Determinando exitencia del archivo a firmar...");
+                File archivo = new File(pathAlArchivo);
+                if(!archivo.exists())
+                    throw new FileNotFoundException((new StringBuilder()).append("No existe el archivo ").append(pathAlArchivo).toString());
+                System.out.println("...OK");
+                archivoAFirmar = new FileInputStream(archivo);
+                archivoSalida = null;
+                ByteArrayOutputStream firmaBinaria;
+                try
+                {
+                    firmaBinaria = new ByteArrayOutputStream();
+                    boolean firmarComoPdf;
+                    if(FilenameUtils.getExtension(pathAlArchivo).compareToIgnoreCase("pdf") == 0)
+                    {
+                        System.out.print("Firmando en formato PDF...");
+                        firmarComoPdf = true;
+                    } else
+                    {
+                        System.out.print("Firmando en formato PKCS7...");
+                        firmarComoPdf = false;
+                    }
+                    firmaBase64 = firmarStream(archivoAFirmar, pathAlStore, passwordDelStore, alias, firmarComoPdf, firmaBinaria);
+                    System.out.println("...OK");
+                }
+                catch(Throwable throwable)
+                {
+                    archivoSalida = throwable;
+                    throw throwable;
+                }
+                if(archivoAFirmar != null)
+                    if(archivoSalida != null)
+                        try
+                        {
+                            archivoAFirmar.close();
+                        }
+                        catch(Throwable x2)
+                        {
+                            archivoSalida.addSuppressed(x2);
+                        }
+                    else
+                        archivoAFirmar.close();
+                break MISSING_BLOCK_LABEL_249;
+                Exception exception;
+                exception;
+                if(archivoAFirmar != null)
+                    if(archivoSalida != null)
+                        try
+                        {
+                            archivoAFirmar.close();
+                        }
+                        catch(Throwable x2)
+                        {
+                            archivoSalida.addSuppressed(x2);
+                        }
+                    else
+                        archivoAFirmar.close();
+                throw exception;
+                Throwable throwable1;
+                String nombreArchivoSalida;
+                if(FilenameUtils.getExtension(pathAlArchivo).compareToIgnoreCase("pdf") == 0)
+                {
+                    System.out.print("Guardando firma PDF a disco...");
+                    nombreArchivoSalida = pathAlArchivo.replace(FilenameUtils.getBaseName(pathAlArchivo), (new StringBuilder()).append(FilenameUtils.getBaseName(pathAlArchivo)).append("_firmado").toString());
+                } else
+                {
+                    System.out.print("Guardando firma PKCS7 a disco...");
+                    nombreArchivoSalida = (new StringBuilder()).append(pathAlArchivo).append(".p7s").toString();
+                }
+                archivoSalida = new FileOutputStream(nombreArchivoSalida);
+                throwable1 = null;
+                try
+                {
+                    archivoSalida.write(firmaBinaria.toByteArray());
+                    System.out.println("...OK");
+                }
+                catch(Throwable throwable2)
+                {
+                    throwable1 = throwable2;
+                    throw throwable2;
+                }
+                if(archivoSalida != null)
+                    if(throwable1 != null)
+                        try
+                        {
+                            archivoSalida.close();
+                        }
+                        catch(Throwable x2)
+                        {
+                            throwable1.addSuppressed(x2);
+                        }
+                    else
+                        archivoSalida.close();
+                break MISSING_BLOCK_LABEL_498;
+                Exception exception1;
+                exception1;
+                if(archivoSalida != null)
+                    if(throwable1 != null)
+                        try
+                        {
+                            archivoSalida.close();
+                        }
+                        catch(Throwable x2)
+                        {
+                            throwable1.addSuppressed(x2);
+                        }
+                    else
+                        archivoSalida.close();
+                throw exception1;
+                Exception ex;
+                ex;
+                System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+                return firmaBase64;
+            }
+
+            public volatile Object run()
+            {
+                return run();
+            }
+
+            String pathAlArchivo;
+            String pathAlStore;
+            String passwordDelStore;
+            String alias;
+            final CMSApplet this$0;
+
+            public _cls4PrivilegedActionListarStore(String pathAlArchivoLocal, String pathAlStoreLocal, String passwordDelStoreLocal, String aliasLocal)
+            {
+                this$0 = CMSApplet.this;
+                super();
+                pathAlArchivo = null;
+                pathAlStore = null;
+                passwordDelStore = null;
+                alias = null;
+                pathAlStore = pathAlStoreLocal;
+                passwordDelStore = passwordDelStoreLocal;
+                pathAlArchivo = pathAlArchivoLocal;
+                alias = aliasLocal;
+            }
+        }
+
+        return (String)AccessController.doPrivileged(new _cls4PrivilegedActionListarStore(pathAlArchivo, pathAlStore, passwordDelStore, alias));
+    }
+
+    public String firmarArchivo(String datosBase64, String pathAlStore, String passwordDelStore, String alias, boolean firmarComoPdf)
+    {
+        class _cls5PrivilegedActionListarStore
+            implements PrivilegedAction
+        {
+
+            public String run()
+            {
+                String firmaBase64 = "";
+                ByteArrayInputStream archivoAFirmar;
+                Throwable throwable;
+                archivoAFirmar = new ByteArrayInputStream(Base64Coder.decode(datosBase64));
+                throwable = null;
+                try
+                {
+                    ByteArrayOutputStream firmaBinaria = new ByteArrayOutputStream();
+                    firmaBase64 = firmarStream(archivoAFirmar, pathAlStore, passwordDelStore, alias, firmarComoPdf, firmaBinaria);
+                    System.out.println("...OK");
+                }
+                catch(Throwable throwable1)
+                {
+                    throwable = throwable1;
+                    throw throwable1;
+                }
+                if(archivoAFirmar != null)
+                    if(throwable != null)
+                        try
+                        {
+                            archivoAFirmar.close();
+                        }
+                        catch(Throwable x2)
+                        {
+                            throwable.addSuppressed(x2);
+                        }
+                    else
+                        archivoAFirmar.close();
+                break MISSING_BLOCK_LABEL_176;
+                Exception exception;
+                exception;
+                if(archivoAFirmar != null)
+                    if(throwable != null)
+                        try
+                        {
+                            archivoAFirmar.close();
+                        }
+                        catch(Throwable x2)
+                        {
+                            throwable.addSuppressed(x2);
+                        }
+                    else
+                        archivoAFirmar.close();
+                throw exception;
+                Exception ex;
+                ex;
+                System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+                return firmaBase64;
+            }
+
+            public volatile Object run()
+            {
+                return run();
+            }
+
+            String datosBase64;
+            String pathAlStore;
+            String passwordDelStore;
+            String alias;
+            boolean firmarComoPdf;
+            final CMSApplet this$0;
+
+            public _cls5PrivilegedActionListarStore(String datosBase64Local, String pathAlStoreLocal, String passwordDelStoreLocal, String aliasLocal, boolean firmarComoPdfLocal)
+            {
+                this$0 = CMSApplet.this;
+                super();
+                datosBase64 = null;
+                pathAlStore = null;
+                passwordDelStore = null;
+                alias = null;
+                firmarComoPdf = false;
+                pathAlStore = pathAlStoreLocal;
+                passwordDelStore = passwordDelStoreLocal;
+                datosBase64 = datosBase64Local;
+                alias = aliasLocal;
+                firmarComoPdf = firmarComoPdfLocal;
+            }
+        }
+
+        return (String)AccessController.doPrivileged(new _cls5PrivilegedActionListarStore(datosBase64, pathAlStore, passwordDelStore, alias, firmarComoPdf));
+    }
+
+    public String firmarZip(String datosBase64, String pathAlStore, String passwordDelStore, String alias, boolean firmarComoPdf)
+    {
+        class _cls6PrivilegedActionListarStore
+            implements PrivilegedAction
+        {
+
+            public String run()
+            {
+                String zipSalidaBase64 = "";
+                try
+                {
+                    int BUFFER = 1024;
+                    byte data[] = new byte[BUFFER];
+                    ByteArrayInputStream fis = new ByteArrayInputStream(Base64Coder.decode(zipBase64));
+                    ZipInputStream zipEntrada = new ZipInputStream(new BufferedInputStream(fis));
+                    ByteArrayOutputStream zipEnBytes = new ByteArrayOutputStream();
+                    ZipOutputStream zipSalida = new ZipOutputStream(zipEnBytes);
+                    ZipEntry entryZipEntrada;
+                    while((entryZipEntrada = zipEntrada.getNextEntry()) != null) 
+                    {
+                        ByteArrayOutputStream archivoEnBytes = new ByteArrayOutputStream();
+                        int count;
+                        while((count = zipEntrada.read(data, 0, BUFFER)) != -1) 
+                            archivoEnBytes.write(data, 0, count);
+                        ByteArrayOutputStream firmaBinaria = null;
+                        byte firmaEnBytes[] = firmarStreamEnBinario(new ByteArrayInputStream(archivoEnBytes.toByteArray()), pathAlStore, passwordDelStore, alias, firmarComoPdf, firmaBinaria);
+                        archivoEnBytes.close();
+                        ZipEntry entryZipSalida = new ZipEntry(entryZipEntrada.getName());
+                        zipSalida.putNextEntry(entryZipSalida);
+                        zipSalida.write(firmaEnBytes);
+                        System.out.println("...OK");
+                    }
+                    zipEntrada.close();
+                    zipSalida.close();
+                    zipEnBytes.flush();
+                    System.out.print("Creando base 64 del zip");
+                    zipSalidaBase64 = new String(Base64Coder.encode(zipEnBytes.toByteArray()));
+                    System.out.print("... OK");
+                    zipEnBytes.close();
+                }
+                catch(Exception ex)
+                {
+                    System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+                }
+                return zipSalidaBase64;
+            }
+
+            public volatile Object run()
+            {
+                return run();
+            }
+
+            String zipBase64;
+            String pathAlStore;
+            String passwordDelStore;
+            String alias;
+            boolean firmarComoPdf;
+            final CMSApplet this$0;
+
+            public _cls6PrivilegedActionListarStore(String zipBase64Local, String pathAlStoreLocal, String passwordDelStoreLocal, String aliasLocal, boolean firmarComoPdfLocal)
+            {
+                this$0 = CMSApplet.this;
+                super();
+                zipBase64 = null;
+                pathAlStore = null;
+                passwordDelStore = null;
+                alias = null;
+                firmarComoPdf = false;
+                pathAlStore = pathAlStoreLocal;
+                passwordDelStore = passwordDelStoreLocal;
+                zipBase64 = zipBase64Local;
+                alias = aliasLocal;
+                firmarComoPdf = firmarComoPdfLocal;
+            }
+        }
+
+        return (String)AccessController.doPrivileged(new _cls6PrivilegedActionListarStore(datosBase64, pathAlStore, passwordDelStore, alias, firmarComoPdf));
+    }
+
+    public String firmarTexto(String textoAFirmar, String pathAlStore, String passwordDelStore, String alias)
+    {
+        class _cls7PrivilegedActionListarStore
+            implements PrivilegedAction
+        {
+
+            public String run()
+            {
+                String firmaBase64 = "";
+                ByteArrayInputStream streamAFirmar;
+                Throwable throwable;
+                streamAFirmar = new ByteArrayInputStream(textoAFirmar.getBytes("UTF-8"));
+                throwable = null;
+                try
+                {
+                    System.out.print("Firmando texto en formato PKCS7...");
+                    firmaBase64 = firmarStream(streamAFirmar, pathAlStore, passwordDelStore, alias, false, null);
+                    System.out.println("...OK");
+                }
+                catch(Throwable throwable1)
+                {
+                    throwable = throwable1;
+                    throw throwable1;
+                }
+                if(streamAFirmar != null)
+                    if(throwable != null)
+                        try
+                        {
+                            streamAFirmar.close();
+                        }
+                        catch(Throwable x2)
+                        {
+                            throwable.addSuppressed(x2);
+                        }
+                    else
+                        streamAFirmar.close();
+                break MISSING_BLOCK_LABEL_169;
+                Exception exception;
+                exception;
+                if(streamAFirmar != null)
+                    if(throwable != null)
+                        try
+                        {
+                            streamAFirmar.close();
+                        }
+                        catch(Throwable x2)
+                        {
+                            throwable.addSuppressed(x2);
+                        }
+                    else
+                        streamAFirmar.close();
+                throw exception;
+                Exception ex;
+                ex;
+                System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+                return firmaBase64;
+            }
+
+            public volatile Object run()
+            {
+                return run();
+            }
+
+            String textoAFirmar;
+            String pathAlStore;
+            String passwordDelStore;
+            String alias;
+            final CMSApplet this$0;
+
+            public _cls7PrivilegedActionListarStore(String textoAFirmarLocal, String pathAlStoreLocal, String passwordDelStoreLocal, String aliasLocal)
+            {
+                this$0 = CMSApplet.this;
+                super();
+                textoAFirmar = null;
+                pathAlStore = null;
+                passwordDelStore = null;
+                alias = null;
+                textoAFirmar = textoAFirmarLocal;
+                pathAlStore = pathAlStoreLocal;
+                passwordDelStore = passwordDelStoreLocal;
+                alias = aliasLocal;
+            }
+        }
+
+        return (String)AccessController.doPrivileged(new _cls7PrivilegedActionListarStore(textoAFirmar, pathAlStore, passwordDelStore, alias));
+    }
+
+    public RESULTADO_VERIFICACION verificarFirma(String pathAlArchivo)
+    {
+        class _cls8PrivilegedActionListarStore
+            implements PrivilegedAction
+        {
+
+            public RESULTADO_VERIFICACION run()
+            {
+                FileInputStream archivoAVerificar;
+                RESULTADO_VERIFICACION resultadoVerificacion;
+                archivoAVerificar = null;
+                resultadoVerificacion = RESULTADO_VERIFICACION.ERROR_DESCONOCIDO;
+                System.out.print("Determinando exitencia del archivo a verificar...");
+                File archivo = new File(pathAlArchivo);
+                if(!archivo.exists())
+                    throw new FileNotFoundException((new StringBuilder()).append("No existe el archivo ").append(pathAlArchivo).toString());
+                System.out.println("...OK");
+                archivoAVerificar = new FileInputStream(archivo);
+                CMS miCMS = new CMS(archivoAVerificar);
+                if(FilenameUtils.getExtension(pathAlArchivo).compareToIgnoreCase("pdf") == 0)
+                {
+                    System.out.print("Verificando en formato PDF...");
+                    resultadoVerificacion = miCMS.verificarPdf(null);
+                    System.out.println("...OK");
+                } else
+                if(FilenameUtils.getExtension(pathAlArchivo).compareToIgnoreCase("p7s") == 0)
+                {
+                    System.out.print("Verificando en formato PKCS7...");
+                    miCMS.decode(new FileOutputStream(FilenameUtils.removeExtension(pathAlArchivo)));
+                    resultadoVerificacion = miCMS.verificar(null, false);
+                    System.out.println("...OK");
+                } else
+                {
+                    System.out.println("El archivo firmado debe tener extencion pdf o p7s para poder ser verificado.");
+                }
+                Exception ex;
+                if(archivoAVerificar != null)
+                    try
+                    {
+                        archivoAVerificar.close();
+                    }
+                    // Misplaced declaration of an exception variable
+                    catch(Exception ex)
+                    {
+                        Logger.getLogger(co/com/andesscd/applets/CMSApplet.getName()).log(Level.SEVERE, null, ex);
+                    }
+                break MISSING_BLOCK_LABEL_335;
+                ex;
+                System.out.println((new StringBuilder()).append("...Error: ").append(ex.getMessage()).toString());
+                if(archivoAVerificar != null)
+                    try
+                    {
+                        archivoAVerificar.close();
+                    }
+                    // Misplaced declaration of an exception variable
+                    catch(Exception ex)
+                    {
+                        Logger.getLogger(co/com/andesscd/applets/CMSApplet.getName()).log(Level.SEVERE, null, ex);
+                    }
+                break MISSING_BLOCK_LABEL_335;
+                Exception exception;
+                exception;
+                if(archivoAVerificar != null)
+                    try
+                    {
+                        archivoAVerificar.close();
+                    }
+                    catch(IOException ex)
+                    {
+                        Logger.getLogger(co/com/andesscd/applets/CMSApplet.getName()).log(Level.SEVERE, null, ex);
+                    }
+                throw exception;
+                return resultadoVerificacion;
+            }
+
+            public volatile Object run()
+            {
+                return run();
+            }
+
+            String pathAlArchivo;
+            final CMSApplet this$0;
+
+            public _cls8PrivilegedActionListarStore(String pathAlArchivoLocal)
+            {
+                this$0 = CMSApplet.this;
+                super();
+                pathAlArchivo = null;
+                pathAlArchivo = pathAlArchivoLocal;
+            }
+        }
+
+        return (RESULTADO_VERIFICACION)AccessController.doPrivileged(new _cls8PrivilegedActionListarStore(pathAlArchivo));
+    }
+}
